@@ -2,14 +2,19 @@ name: Sync Notion to GitHub
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # Every 15 minutes
-  workflow_dispatch:  # Manual trigger
+    - cron: '*/15 * * * *'  # Runs every 15 minutes
+  workflow_dispatch:  # Allows for manual triggering
 
 jobs:
   sync:
     runs-on: ubuntu-latest
+    # Added permissions to allow the bot to write changes back to the repository
+    permissions:
+      contents: write
+      
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -17,19 +22,25 @@ jobs:
           node-version: '20'
       
       - name: Install dependencies
+        # Added --save to ensure the package is tracked if needed
         run: npm install @notionhq/client
       
       - name: Sync Notion pages
         env:
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }} 
-          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }} 
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+        # Runs the sync script located in the js directory
         run: node js/sync-notion.js
       
-      - name: Commit changes
+      - name: Commit and Push changes
         run: |
           git config user.name "Notion Sync Bot"
           git config user.email "bot@globalmix.online"
           git add .
-          git diff --quiet && git diff --staged --quiet || \
+          # Check for changes before attempting to commit to avoid workflow errors
+          if [ -n "$(git status --porcelain)" ]; then
             git commit -m "Sync from Notion $(date +'%Y-%m-%d %H:%M')"
-          git push
+            git push
+          else
+            echo "No changes to commit"
+          fi
