@@ -1,16 +1,23 @@
-
-title: GLOBAL MIX NETWORK
-description: A Global Ecosystem
-url: "https://www.globalmix.network"
+title: GLOBAL MIX Online
+description: A curated editorial platform exploring travel, hospitality, and luxury culture.
+url: "https://www.globalmix.online"
 baseurl: ""
 
+# Collections configuration for Notion-synced content
 collections:
-  content:
+  posts:
     output: true
-    permalink: /:slug/
+    permalink: /posts/:slug/
+
+# Build settings
+markdown: kramdown
+theme: minima # Or your specific layout theme
 
 exclude:
   - node_modules
   - package.json
   - package-lock.json
   - README.md
+  - vendor
+  - js/sync-notion.js # Exclude the sync script from the final build
+  - workflows/
