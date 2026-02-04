@@ -1,0 +1,16 @@
+
+title: GLOBAL MIX NETWORK
+description: A Global Ecosystem
+url: "https://www.globalmix.network"
+baseurl: ""
+
+collections:
+  content:
+    output: true
+    permalink: /:slug/
+
+exclude:
+  - node_modules
+  - package.json
+  - package-lock.json
+  - README.md
