@@ -1,15 +1,144 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const header = document.querySelector('.site-header');
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-  window.addEventListener('scroll', () => {
-    header.style.boxShadow = window.scrollY > 60
-      ? '0 10px 30px rgba(0,0,0,0.08)'
-      : 'none';
-  });
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f6f4f1;
+  color: #1a1a1a;
+  line-height: 1.7;
+}
 
-  // Editorial engagement hooks
-  // - Reading time calculation
-  // - Save / bookmark stories
-  // - Subscriber-only story unlock
-  // - Sponsored brand attribution
-});
+.site-header {
+  position: fixed;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px 80px;
+  background: rgba(246,244,241,0.95);
+  backdrop-filter: blur(6px);
+  z-index: 100;
+}
+
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  letter-spacing: 2px;
+}
+
+.logo span { opacity: 0.6; font-weight: 300; margin-left: 6px; }
+
+.nav a {
+  margin-left: 36px;
+  text-decoration: none;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: #1a1a1a;
+}
+
+.nav-cta { border-bottom: 1px solid #1a1a1a; }
+
+.hero {
+  height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.65)), url('https://images.unsplash.com/photo-1491553895911-0055eca6402d');
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 52px;
+  margin-bottom: 20px;
+}
+
+.hero p { max-width: 640px; margin: auto; font-size: 18px; }
+
+.container { max-width: 1300px; margin: 140px auto; padding: 0 40px; }
+
+.story-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 50px;
+  margin-bottom: 140px;
+}
+
+.story-card {
+  background: #fff;
+  overflow: hidden;
+}
+
+.story-card img { width: 100%; height: 240px; object-fit: cover; }
+
+.story-content { padding: 32px; }
+
+.story-tag {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.6;
+}
+
+.story-content h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  margin: 16px 0;
+}
+
+.story-link { text-decoration: none; font-size: 14px; color: #1a1a1a; }
+
+.section-header { text-align: center; margin-bottom: 60px; }
+
+.section-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.brand-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+}
+
+.brand-tile {
+  padding: 40px;
+  background: #fff;
+  text-align: center;
+  text-decoration: none;
+  color: #1a1a1a;
+  font-family: 'Playfair Display', serif;
+}
+
+.subscribe {
+  margin: 160px 0;
+  text-align: center;
+}
+
+.subscribe-form {
+  margin-top: 30px;
+}
+
+.subscribe-form input {
+  padding: 14px;
+  width: 260px;
+  border: 1px solid #ccc;
+}
+
+.subscribe-form button {
+  padding: 14px 30px;
+  margin-left: 10px;
+  border: 1px solid #1a1a1a;
+  background: none;
+  cursor: pointer;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 13px;
+  opacity: 0.6;
+}
