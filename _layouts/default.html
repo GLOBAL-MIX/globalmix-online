@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ page.title }} | GLOBAL MIX</title>
-    <link rel="stylesheet" href="{{ '/css/styles.css' | relative_url }}">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="site-header">
-        <div class="container">
-            <a class="site-logo" href="/">GLOBAL MIX</a>
-            <nav class="site-nav">
-                <a href="/">Home</a>
-                <a href="/stories/">Stories</a>
-            </nav>
-        </div>
+        <a class="logo" href="/">GLOBAL MIX <span>Online</span></a>
+        <nav class="nav">
+            <a href="/">Home</a>
+            <a href="/stories/">Stories</a>
+        </nav>
     </header>
 
     <main>
@@ -22,9 +23,7 @@
     </main>
 
     <footer class="site-footer">
-        <div class="container">
-            <small>&copy; 2026 GLOBAL MIX</small>
-        </div>
+        <p>&copy; 2026 GLOBAL MIX Online. Curated Culture.</p>
     </footer>
 </body>
 </html>
