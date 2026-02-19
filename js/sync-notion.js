@@ -29,8 +29,10 @@ async function syncPages() {
 
   for (const page of response.results) {
     const props = page.properties;
-    const title = props['Page Title']?.title[0]?.plain_text || 'untitled';
-    const slug = props['URL Slug']?.rich_text[0]?.plain_text || slugify(title);
+    
+    // SAFE ARRAY ACCESS added here (?.[0])
+    const title = props['Page Title']?.title?.[0]?.plain_text || 'untitled';
+    const slug = props['URL Slug']?.rich_text?.[0]?.plain_text || slugify(title);
 
     const imageDir = path.join('images', 'posts', slug);
     if (!fs.existsSync(imageDir)) {
@@ -38,7 +40,7 @@ async function syncPages() {
     }
 
     let coverImage = '';
-    if (props['Cover Image'] && props['Cover Image'].files.length > 0) {
+    if (props['Cover Image'] && props['Cover Image'].files && props['Cover Image'].files.length > 0) {
         const fileObj = props['Cover Image'].files[0];
         const imageUrl = fileObj.file?.url || fileObj.external?.url;
         if (imageUrl) {
@@ -108,13 +110,14 @@ function getExtension(url) {
 function generateFrontmatter(props, coverImage) {
   const meta = {
     layout: 'post',
-    title: props['Page Title']?.title[0]?.plain_text,
-    description: props['Meta Description']?.rich_text[0]?.plain_text,
-    date: props['Publish Date']?.date?.start,
+    // SAFE ARRAY ACCESS added to all properties here so empty columns don't crash it
+    title: props['Page Title']?.title?.[0]?.plain_text || '',
+    description: props['Meta Description']?.rich_text?.[0]?.plain_text || '',
+    date: props['Publish Date']?.date?.start || '',
     tags: props['Tags']?.multi_select?.map(t => t.name) || [],
     image: coverImage,
-    author: props['Author']?.rich_text[0]?.plain_text,
-    excerpt: props['Excerpt']?.rich_text[0]?.plain_text
+    author: props['Author']?.rich_text?.[0]?.plain_text || '',
+    excerpt: props['Excerpt']?.rich_text?.[0]?.plain_text || ''
   };
 
   return '---\n' + Object.entries(meta)
