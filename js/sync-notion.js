@@ -7,7 +7,6 @@ const notion = new Client({ auth: process.env.NOTION_TOKEN });
 const databaseId = process.env.NOTION_DATABASE_ID;
 
 // --- CONFIGURATION ---
-// I updated this for your .online repository
 const TARGET_WEBSITE = 'globalmix.online'; 
 // ---------------------
 
@@ -71,21 +70,31 @@ async function syncPages() {
     
     console.log(`✓ Synced "${title}" to GitHub`);
 
-    // --- NEW: UPDATE NOTION STATUS TO LIVE ---
+    // --- NEW: UPDATE NOTION STATUS & SYNC DATE ---
     try {
+        const now = new Date().toISOString(); 
+
         await notion.pages.update({
             page_id: page.id,
             properties: {
+                // 1. Update Status to Live
                 'Status': {
                     status: {
-                        name: 'Live' // This updates the status to Live!
+                        name: 'Live'
+                    }
+                },
+                // 2. Add the exact timestamp using your exact Notion column name
+                'Last Synced to GitHub': {
+                    date: {
+                        start: now
                     }
                 }
             }
         });
-        console.log(`✓ Updated Notion status to "Live" for "${title}"`);
+        console.log(`✓ SUCCESS: Updated Notion status to "Live" and recorded sync date for "${title}"`);
     } catch (error) {
-        console.error(`❌ Failed to update Notion status: ${error.message}`);
+        // Advanced logging: This will tell us exactly why Notion rejected it if it fails again
+        console.error(`❌ FAILED to update Notion for "${title}". Reason:`, error.body || error.message);
     }
   }
 }
@@ -120,9 +129,9 @@ function generateFrontmatter(props, coverImage) {
     title: props['Page Title'].title[0]?.plain_text,
     description: props['Meta Description'].rich_text[0]?.plain_text,
     date: props['Publish Date'].date?.start,
-    tags: props['Tags'].multi_select.map(t => t.name),
+    tags: props['Tags']?.multi_select?.map(t => t.name) || [],
     image: coverImage,
-    author: props['Author'].rich_text[0]?.plain_text,
+    author: props['Author']?.rich_text[0]?.plain_text,
     excerpt: props['Excerpt']?.rich_text[0]?.plain_text
   };
   
