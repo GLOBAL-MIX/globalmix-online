@@ -6,11 +6,11 @@ const https = require('https');
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
 const databaseId = process.env.NOTION_DATABASE_ID;
 
-const TARGET_WEBSITE = 'globalmix.online'; 
+const TARGET_WEBSITE = 'globalmix.online';
 
 async function syncPages() {
   console.log(`🔄 Starting Sync for: ${TARGET_WEBSITE}...`);
-  
+
   const response = await notion.databases.query({
     database_id: databaseId,
     filter: {
@@ -31,7 +31,7 @@ async function syncPages() {
     const props = page.properties;
     const title = props['Page Title']?.title[0]?.plain_text || 'untitled';
     const slug = props['URL Slug']?.rich_text[0]?.plain_text || slugify(title);
-    
+
     const imageDir = path.join('images', 'posts', slug);
     if (!fs.existsSync(imageDir)) {
         fs.mkdirSync(imageDir, { recursive: true });
@@ -53,16 +53,16 @@ async function syncPages() {
       block_id: page.id,
       page_size: 100
     });
-    
+
     const markdown = await convertBlocksToMarkdown(blocks.results, slug, imageDir);
     const frontmatter = generateFrontmatter(props, coverImage);
-    
-    // BULLETPROOF FILEPATH (No backticks required)
+
+    // BULLETPROOF FILEPATH
     const filepath = path.join('_posts', slug + '.md');
-    
+
     fs.mkdirSync(path.dirname(filepath), { recursive: true });
     fs.writeFileSync(filepath, frontmatter + '\n\n' + markdown);
-    
+
     console.log(`✓ Synced "${title}" to GitHub`);
 
     // UPDATE NOTION STATUS & DATE
@@ -116,7 +116,7 @@ function generateFrontmatter(props, coverImage) {
     author: props['Author']?.rich_text[0]?.plain_text,
     excerpt: props['Excerpt']?.rich_text[0]?.plain_text
   };
-  
+
   return '---\n' + Object.entries(meta)
     .filter(([k, v]) => v)
     .map(([k, v]) => k + ': ' + JSON.stringify(v))
