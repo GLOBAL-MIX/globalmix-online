@@ -6,15 +6,13 @@ const https = require('https');
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
 const databaseId = process.env.NOTION_DATABASE_ID;
 
-// --- CONFIGURATION ---
 const TARGET_WEBSITE = 'globalmix.online'; 
-// ---------------------
 
 async function syncPages() {
   console.log(`🔄 Starting Sync for: ${TARGET_WEBSITE}...`);
   
   const response = await notion.databases.query({
-database_id: databaseId,
+    database_id: databaseId,
     filter: {
       and: [
         { property: 'Sync to GitHub', checkbox: { equals: true } },
@@ -25,35 +23,32 @@ database_id: databaseId,
   });
 
   if (response.results.length === 0) {
-      console.log("No new articles found to sync.");
+      console.log("⚠️ No articles matched the exact filters (Published + globalmix.online + Sync Checked).");
       return;
   }
 
   for (const page of response.results) {
     const props = page.properties;
-    const title = props['Page Title'].title[0]?.plain_text || 'untitled';
-    const slug = props['URL Slug'].rich_text[0]?.plain_text || slugify(title);
+    const title = props['Page Title']?.title[0]?.plain_text || 'untitled';
+    const slug = props['URL Slug']?.rich_text[0]?.plain_text || slugify(title);
     
-    // Create folder for post images
     const imageDir = path.join('images', 'posts', slug);
     if (!fs.existsSync(imageDir)) {
         fs.mkdirSync(imageDir, { recursive: true });
     }
 
-    // --- HANDLE COVER IMAGE ---
     let coverImage = '';
     if (props['Cover Image'] && props['Cover Image'].files.length > 0) {
         const fileObj = props['Cover Image'].files[0];
         const imageUrl = fileObj.file?.url || fileObj.external?.url;
         if (imageUrl) {
             const ext = getExtension(imageUrl);
-            const filename = `cover${ext}`;
+            const filename = 'cover' + ext;
             await downloadImage(imageUrl, path.join(imageDir, filename));
-            coverImage = `/images/posts/${slug}/${filename}`;
+            coverImage = '/images/posts/' + slug + '/' + filename;
         }
     }
 
-    // --- FETCH CONTENT ---
     const blocks = await notion.blocks.children.list({
       block_id: page.id,
       page_size: 100
@@ -62,54 +57,41 @@ database_id: databaseId,
     const markdown = await convertBlocksToMarkdown(blocks.results, slug, imageDir);
     const frontmatter = generateFrontmatter(props, coverImage);
     
-    // Save to content/posts/slug.md
-    const filepath = path.join('_posts', `${slug}.md`);
+    // BULLETPROOF FILEPATH (No backticks required)
+    const filepath = path.join('_posts', slug + '.md');
     
     fs.mkdirSync(path.dirname(filepath), { recursive: true });
-    fs.writeFileSync(filepath, `${frontmatter}\n\n${markdown}`);
+    fs.writeFileSync(filepath, frontmatter + '\n\n' + markdown);
     
     console.log(`✓ Synced "${title}" to GitHub`);
 
-    // --- NEW: UPDATE NOTION STATUS & SYNC DATE ---
+    // UPDATE NOTION STATUS & DATE
     try {
         const now = new Date().toISOString(); 
-
         await notion.pages.update({
             page_id: page.id,
             properties: {
-                // 1. Update Status to Live
                 'Status': {
-                    status: {
-                        name: 'Live'
-                    }
+                    status: { name: 'Live' }
                 },
-                // 2. Add the exact timestamp using your exact Notion column name
                 'Last Synced to GitHub': {
-                    date: {
-                        start: now
-                    }
+                    date: { start: now }
                 }
             }
         });
-        console.log(`✓ SUCCESS: Updated Notion status to "Live" and recorded sync date for "${title}"`);
+        console.log(`✓ SUCCESS: Updated Notion status to "Live" for "${title}"`);
     } catch (error) {
-        // Advanced logging: This will tell us exactly why Notion rejected it if it fails again
         console.error(`❌ FAILED to update Notion for "${title}". Reason:`, error.body || error.message);
     }
   }
 }
-
-// --- HELPER FUNCTIONS ---
 
 function downloadImage(url, filepath) {
     return new Promise((resolve, reject) => {
         const file = fs.createWriteStream(filepath);
         https.get(url, (response) => {
             response.pipe(file);
-            file.on('finish', () => {
-                file.close();
-                resolve();
-            });
+            file.on('finish', () => { file.close(); resolve(); });
         }).on('error', (err) => {
             fs.unlink(filepath, () => {}); 
             reject(err.message);
@@ -126,9 +108,9 @@ function getExtension(url) {
 function generateFrontmatter(props, coverImage) {
   const meta = {
     layout: 'post',
-    title: props['Page Title'].title[0]?.plain_text,
-    description: props['Meta Description'].rich_text[0]?.plain_text,
-    date: props['Publish Date'].date?.start,
+    title: props['Page Title']?.title[0]?.plain_text,
+    description: props['Meta Description']?.rich_text[0]?.plain_text,
+    date: props['Publish Date']?.date?.start,
     tags: props['Tags']?.multi_select?.map(t => t.name) || [],
     image: coverImage,
     author: props['Author']?.rich_text[0]?.plain_text,
@@ -137,63 +119,36 @@ function generateFrontmatter(props, coverImage) {
   
   return '---\n' + Object.entries(meta)
     .filter(([k, v]) => v)
-    .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
+    .map(([k, v]) => k + ': ' + JSON.stringify(v))
     .join('\n') + '\n---';
 }
 
 function slugify(text) {
-  return text.toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
 async function convertBlocksToMarkdown(blocks, slug, imageDir) {
   const output = [];
-  
   for (const block of blocks) {
     switch(block.type) {
-      case 'paragraph':
-        output.push(block.paragraph.rich_text.map(t => t.plain_text).join(''));
-        break;
-      case 'heading_1':
-        output.push('# ' + block.heading_1.rich_text.map(t => t.plain_text).join(''));
-        break;
-      case 'heading_2':
-        output.push('## ' + block.heading_2.rich_text.map(t => t.plain_text).join(''));
-        break;
-      case 'heading_3':
-        output.push('### ' + block.heading_3.rich_text.map(t => t.plain_text).join(''));
-        break;
-      case 'bulleted_list_item':
-        output.push('- ' + block.bulleted_list_item.rich_text.map(t => t.plain_text).join(''));
-        break;
-      case 'numbered_list_item':
-        output.push('1. ' + block.numbered_list_item.rich_text.map(t => t.plain_text).join(''));
-        break;
+      case 'paragraph': output.push(block.paragraph.rich_text.map(t => t.plain_text).join('')); break;
+      case 'heading_1': output.push('# ' + block.heading_1.rich_text.map(t => t.plain_text).join('')); break;
+      case 'heading_2': output.push('## ' + block.heading_2.rich_text.map(t => t.plain_text).join('')); break;
+      case 'heading_3': output.push('### ' + block.heading_3.rich_text.map(t => t.plain_text).join('')); break;
+      case 'bulleted_list_item': output.push('- ' + block.bulleted_list_item.rich_text.map(t => t.plain_text).join('')); break;
+      case 'numbered_list_item': output.push('1. ' + block.numbered_list_item.rich_text.map(t => t.plain_text).join('')); break;
       case 'image':
         const imgObj = block.image;
         const imgUrl = imgObj.file?.url || imgObj.external?.url;
-        const caption = imgObj.caption.length ? imgObj.caption[0].plain_text : "Image";
         if (imgUrl) {
             const ext = getExtension(imgUrl);
-            const filename = `${block.id}${ext}`;
+            const filename = block.id + ext;
             const savePath = path.join(imageDir, filename);
-            const publicPath = `/images/posts/${slug}/${filename}`;
+            const publicPath = '/images/posts/' + slug + '/' + filename;
             try {
                 await downloadImage(imgUrl, savePath);
-                output.push(`![${caption}](${publicPath})`);
-            } catch (e) {
-                console.error(`Failed to download image: ${e}`);
-            }
-        }
-        break;
-      case 'video':
-        const vidUrl = block.video?.external?.url || block.video?.file?.url;
-        if (vidUrl && vidUrl.includes('youtube.com')) {
-             const videoId = vidUrl.split('v=')[1]?.split('&')[0];
-             if (videoId) {
-                 output.push(`<iframe width="100%" height="400" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`);
-             }
+                output.push('![Image](' + publicPath + ')');
+            } catch (e) { console.error(`Failed to download image: ${e}`); }
         }
         break;
     }
