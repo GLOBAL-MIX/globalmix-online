@@ -63,7 +63,7 @@ database_id: databaseId,
     const frontmatter = generateFrontmatter(props, coverImage);
     
     // Save to content/posts/slug.md
-    const filepath = path.join('_posts', ${slug}.md);
+    const filepath = path.join('_posts', `${slug}.md`);
     
     fs.mkdirSync(path.dirname(filepath), { recursive: true });
     fs.writeFileSync(filepath, `${frontmatter}\n\n${markdown}`);
