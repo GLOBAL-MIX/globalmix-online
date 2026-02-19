@@ -23,8 +23,8 @@ jobs:
       
       - name: Install dependencies
         # Added --save to ensure the package is tracked if needed
-        run: npm install @notionhq/client
-      
+        run: npm install @notionhq/client@2.2.15
+        
       - name: Sync Notion pages
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
