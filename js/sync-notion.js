@@ -30,7 +30,7 @@ async function syncPages() {
   for (const page of response.results) {
     const props = page.properties;
     
-    // SAFE ARRAY ACCESS added here (?.[0])
+    // SAFE ARRAY ACCESS
     const title = props['Page Title']?.title?.[0]?.plain_text || 'untitled';
     const slug = props['URL Slug']?.rich_text?.[0]?.plain_text || slugify(title);
 
@@ -59,13 +59,17 @@ async function syncPages() {
     const markdown = await convertBlocksToMarkdown(blocks.results, slug, imageDir);
     const frontmatter = generateFrontmatter(props, coverImage);
 
-    // BULLETPROOF FILEPATH
-    const filepath = path.join('_posts', slug + '.md');
+    // --- JEKYLL DATE FIX ---
+    // Grabs the publish date from Notion, or uses today's date as a fallback
+    const dateStr = props['Publish Date']?.date?.start?.split('T')[0] || new Date().toISOString().split('T')[0];
+    
+    // Saves as: YYYY-MM-DD-slug.md
+    const filepath = path.join('_posts', dateStr + '-' + slug + '.md');
 
     fs.mkdirSync(path.dirname(filepath), { recursive: true });
     fs.writeFileSync(filepath, frontmatter + '\n\n' + markdown);
 
-    console.log(`✓ Synced "${title}" to GitHub`);
+    console.log(`✓ Synced "${title}" to GitHub with Jekyll-friendly filename`);
 
     // UPDATE NOTION STATUS & DATE
     try {
@@ -110,7 +114,6 @@ function getExtension(url) {
 function generateFrontmatter(props, coverImage) {
   const meta = {
     layout: 'post',
-    // SAFE ARRAY ACCESS added to all properties here so empty columns don't crash it
     title: props['Page Title']?.title?.[0]?.plain_text || '',
     description: props['Meta Description']?.rich_text?.[0]?.plain_text || '',
     date: props['Publish Date']?.date?.start || '',
