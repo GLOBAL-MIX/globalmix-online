@@ -7,8 +7,8 @@ const notion = new Client({ auth: process.env.NOTION_TOKEN });
 const databaseId = process.env.NOTION_DATABASE_ID;
 
 // --- CONFIGURATION ---
-// Change this ONE line when you fork this repo for other sites
-const TARGET_WEBSITE = 'network'; 
+// I updated this for your .online repository
+const TARGET_WEBSITE = 'globalmix.online'; 
 // ---------------------
 
 async function syncPages() {
@@ -24,6 +24,11 @@ async function syncPages() {
       ]
     }
   });
+
+  if (response.results.length === 0) {
+      console.log("No new articles found to sync.");
+      return;
+  }
 
   for (const page of response.results) {
     const props = page.properties;
@@ -64,7 +69,24 @@ async function syncPages() {
     fs.mkdirSync(path.dirname(filepath), { recursive: true });
     fs.writeFileSync(filepath, `${frontmatter}\n\n${markdown}`);
     
-    console.log(`✓ Synced "${title}"`);
+    console.log(`✓ Synced "${title}" to GitHub`);
+
+    // --- NEW: UPDATE NOTION STATUS TO LIVE ---
+    try {
+        await notion.pages.update({
+            page_id: page.id,
+            properties: {
+                'Status': {
+                    status: {
+                        name: 'Live' // This updates the status to Live!
+                    }
+                }
+            }
+        });
+        console.log(`✓ Updated Notion status to "Live" for "${title}"`);
+    } catch (error) {
+        console.error(`❌ Failed to update Notion status: ${error.message}`);
+    }
   }
 }
 
