@@ -63,7 +63,7 @@ async function syncPages() {
     const frontmatter = generateFrontmatter(props, coverImage);
     
     // Save to content/posts/slug.md
-    const filepath = path.join('content', 'posts', `${slug}.md`);
+    const filepath = path.join('_content', 'posts', `${slug}.md`);;
     
     fs.mkdirSync(path.dirname(filepath), { recursive: true });
     fs.writeFileSync(filepath, `${frontmatter}\n\n${markdown}`);
