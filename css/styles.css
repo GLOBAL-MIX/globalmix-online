@@ -13,35 +13,48 @@ body {
 /* Header & Nav */
 .site-header {
   position: fixed;
-  top: 0;           /* Locks it to the absolute top */
-  left: 0;          /* Locks it to the absolute left */
+  top: 0;
+  left: 0;
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 5%; /* Balanced padding for a slim look */
-  background: rgba(246, 244, 241, 0.98); /* Slightly more solid for readability */
+  padding: 10px 5%;
+  background: rgba(246, 244, 241, 0.98); 
   backdrop-filter: blur(8px);
-  z-index: 2000;    /* Higher z-index to stay above all content */
-  border-bottom: 1px solid rgba(0,0,0,0.05); /* Adds a subtle definition line */
+  z-index: 9999;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
+/* Resetting the Logo Link */
 .logo {
   font-family: 'Playfair Display', serif;
   font-size: 18px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: #1a1a1a;   /* Force black color */
-  text-decoration: none; /* Remove blue underline */
-  display: flex;
-  align-items: center;
+  color: #1a1a1a !important; /* Forces black color */
+  text-decoration: none !important; /* Removes blue underline */
 }
 
 .logo span { 
   opacity: 0.5; 
   font-weight: 300; 
   margin-left: 8px; 
-  font-size: 14px; 
+}
+
+/* Resetting Navigation Links */
+.nav a {
+  margin-left: 30px;
+  text-decoration: none !important; /* Removes blue underline */
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #1a1a1a !important; /* Forces black color */
+  transition: opacity 0.3s;
+}
+
+.nav a:hover { 
+  opacity: 0.6; 
 }
 
 /* Hero Section */
