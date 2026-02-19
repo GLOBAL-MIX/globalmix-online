@@ -17,7 +17,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 5%;
+  /* REDUCED PADDING to make the header slimmer */
+  padding: 10px 5%; 
   background: rgba(246,244,241,0.95);
   backdrop-filter: blur(6px);
   z-index: 1000;
@@ -26,9 +27,12 @@ body {
 
 .logo {
   font-family: 'Playfair Display', serif;
-  font-size: 22px;
+  font-size: 20px; /* Reduced slightly to match slimmer header */
   letter-spacing: 2px;
   text-transform: uppercase;
+  /* ADDED THESE TWO LINES to remove the default blue and underline */
+  color: #1a1a1a; 
+  text-decoration: none;
 }
 
 .logo span { opacity: 0.6; font-weight: 300; margin-left: 6px; }
@@ -164,7 +168,7 @@ body {
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-  .site-header { padding: 20px; flex-direction: column; gap: 15px; }
+  .site-header { padding: 15px; flex-direction: column; gap: 10px; }
   .nav a { margin: 0 10px; font-size: 11px; }
   .container { margin: 60px auto; }
 }
