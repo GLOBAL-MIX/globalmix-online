@@ -1,19 +1,35 @@
 ---
 layout: default
 ---
-<section class="section light-bg">
-    <div class="container">
-        <article class="content">
-            <div style="margin-bottom: 40px;">
-                <h1>{{ page.title }}</h1>
-                <p class="subtitle">{{ page.description }}</p>
-            </div>
-            
-            {% if page.image %}
-                <img src="{{ page.image }}" alt="{{ page.title }}" style="max-width: 100%; border-radius: 8px; margin-bottom: 30px;">
-            {% endif %}
+<div class="container article-container" style="max-width: 800px; padding-top: 120px;">
+    
+    <header style="text-align: center; margin-bottom: 50px;">
+        <h1 style="font-family: 'Playfair Display', serif; font-size: clamp(32px, 5vw, 48px); margin-bottom: 15px;">{{ page.title }}</h1>
+        <p style="font-size: 18px; color: #555; font-weight: 300;">{{ page.description }}</p>
+        
+        <div style="margin-top: 20px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #888;">
+            {% if page.author %} By {{ page.author }} &nbsp;|&nbsp; {% endif %} 
+            {{ page.date | date: "%B %d, %Y" }}
+        </div>
+    </header>
+    
+    {% if page.image %}
+        <div style="margin-bottom: 50px;">
+            <img src="{{ page.image }}" alt="{{ page.title }}" style="width: 100%; border-radius: 4px; object-fit: cover; max-height: 600px;">
+        </div>
+    {% endif %}
 
-            {{ content }}
-        </article>
-    </div>
-</section>
+    <article class="article-body">
+        {{ content }}
+    </article>
+    
+</div>
+
+<style>
+    .article-body p { margin-bottom: 25px; font-size: 17px; line-height: 1.8; color: #333; }
+    .article-body h2 { font-family: 'Playfair Display', serif; font-size: 28px; margin: 40px 0 20px; }
+    .article-body h3 { font-family: 'Playfair Display', serif; font-size: 22px; margin: 30px 0 15px; }
+    .article-body ul { margin-bottom: 25px; padding-left: 20px; }
+    .article-body li { margin-bottom: 10px; }
+    .article-body img { max-width: 100%; border-radius: 4px; margin: 30px 0; }
+</style>
