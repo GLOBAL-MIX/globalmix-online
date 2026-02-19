@@ -13,8 +13,8 @@ const TARGET_WEBSITE = 'globalmix.online';
 async function syncPages() {
   console.log(`🔄 Starting Sync for: ${TARGET_WEBSITE}...`);
   
-  const response = await notion.dataSources.query({
-    data_source_id: databaseId,
+  const response = await notion.databases.query({
+database_id: databaseId,
     filter: {
       and: [
         { property: 'Sync to GitHub', checkbox: { equals: true } },
