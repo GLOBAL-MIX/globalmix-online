@@ -1,0 +1,28 @@
+---
+layout: default
+title: Travel
+---
+<div class="container" style="padding-top: 100px;">
+    <header class="section-header">
+        <h1 style="font-family: 'Playfair Display', serif; font-size: 42px;">Travel</h1>
+        <p style="color: #888; letter-spacing: 1px; text-transform: uppercase; font-size: 12px;">Global Destinations</p>
+    </header>
+
+    <div class="story-grid">
+        {% for post in site.posts %}
+            {% if post.tags contains 'Travel' %}
+                <article class="story-card">
+                    <a href="{{ post.url }}">
+                        <img src="{{ post.image }}" alt="{{ post.title }}">
+                    </a>
+                    <div class="story-content">
+                        <span class="story-tag">Travel</span>
+                        <h2>{{ post.title }}</h2>
+                        <p style="font-size: 14px; color: #666; margin-bottom: 20px;">{{ post.excerpt }}</p>
+                        <a href="{{ post.url }}" class="story-link">Read Story</a>
+                    </div>
+                </article>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
