@@ -4,6 +4,7 @@ title: "BW Hair Studio & Spa"
 date: "2026-02-21"
 tags: ["Leisure"]
 image: "/images/posts/bw-hair-studios/cover.jpeg"
+excerpt: "BW Hair Studio & Spa delivers Florida luxury beauty and wellness through personalized service and trust-first hospitality."
 ---
 
 # Where Luxury Meets Authentic Style in Florida
