@@ -2,7 +2,7 @@
 layout: "post"
 title: "Inter Miami CF"
 date: "2026-02-22"
-tags: ["Leisure"]
+tags: ["Entertainment"]
 image: "/images/posts/inter-miami/cover.jpeg"
 excerpt: "Inter Miami CF blends elite football with Miami’s luxury lifestyle, turning matches into high end hospitality and networking experiences."
 ---
