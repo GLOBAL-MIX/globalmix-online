@@ -1,22 +1,22 @@
 ---
 layout: default
-title: Global Holdings
+title: Philanthropy
 ---
 <div class="container" style="padding-top: 100px;">
     <header class="section-header">
-        <h1 style="font-family: 'Playfair Display', serif; font-size: 42px;">Global Holdings</h1>
-        <p style="color: #888; letter-spacing: 1px; text-transform: uppercase; font-size: 12px;">Beyond Boarders</p>
+        <h1 style="font-family: 'Playfair Display', serif; font-size: 42px;">Philanthropy</h1>
+        <p style="color: #888; letter-spacing: 1px; text-transform: uppercase; font-size: 12px;">Leagacy Creators</p>
     </header>
 
     <div class="story-grid">
         {% for post in site.posts %}
-            {% if post.tags contains 'Global Holdings' %}
+            {% if post.tags contains 'Philanthropy' %}
                 <article class="story-card">
                     <a href="{{ post.url }}">
                         <img src="{{ post.image }}" alt="{{ post.title }}">
                     </a>
                     <div class="story-content">
-                        <span class="story-tag">Global Holdings</span>
+                        <span class="story-tag">Philanthropy</span>
                         <h2>{{ post.title }}</h2>
                         <p style="font-size: 14px; color: #666; margin-bottom: 20px;">{{ post.excerpt }}</p>
                         <a href="{{ post.url }}" class="story-link">Read Story</a>
