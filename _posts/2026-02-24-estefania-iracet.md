@@ -11,7 +11,7 @@ In the music world, there are names that shine brightly, but few combine artisti
 
 
 
-![Image](/images/posts/estefania-iracet/3119f477-fdba-805c-ab79-f5ea17bc17ed.jpeg)
+![Image](/images/posts/estefania-iracet/3149f477-fdba-8012-a5da-f0ca57883a3d.jpeg)
 
 
 
